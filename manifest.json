@@ -1,0 +1,17 @@
+{
+    "name": "Simply",
+    "description": "A very simple Chrome App for texts.",
+    "version": "0.0.1",
+    "minimum_chrome_version": "35",
+    "manifest_version": 2,
+    "app": {
+        "background": {
+            "scripts": ["background.js"]
+        }
+    },
+    "icons": {
+        "16": "img/logo-16.png",
+        "128": "img/logo-128.png"
+    },
+    "permissions": ["fullscreen", "alwaysOnTopWindows"]
+}
