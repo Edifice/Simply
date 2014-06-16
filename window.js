@@ -1,3 +1,12 @@
+/**
+ * Simply text-editor.
+ *
+ * --------------------
+ * Links:
+ * - Inspiration came from: https://gist.github.com/addyosmani/d1f3ca715ac902788c2d
+ * - Executable Commands: http://msdn.microsoft.com/en-us/library/hh801227(v=vs.85).aspx
+ */
+
 window.requestFileSystem = window.requestFileSystem || window.webkitRequestFileSystem;
 window.resolveLocalFileSystemURL = window.webkitResolveLocalFileSystemURL || window.webkitResolveLocalFileSystemURL;
 
@@ -72,6 +81,8 @@ window.resolveLocalFileSystemURL = window.webkitResolveLocalFileSystemURL || win
 			updateFileName();
 			updateLoadDropdown();
 			updateSaveDropdown();
+			$(document).on('dragOver', onDragOver);
+			$(document).on('drop', onDrop);
 		});
 	});
 
@@ -230,6 +241,61 @@ window.resolveLocalFileSystemURL = window.webkitResolveLocalFileSystemURL || win
 			}
 		}
 		return window.simply.fileName;
+	};
+
+	var onDrop = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if(isValidFileToDrop(e.dataTransfer)){
+			var items = e.dataTransfer.items;
+			var files = e.dataTransfer.files;
+
+			for (var i = 0, item; item = items[i]; ++i) {
+				// Skip this one if we didn't get a file.
+				if (item.kind != 'file') {
+					continue;
+				}
+
+				var entry = item.webkitGetAsEntry();
+				if (entry.isDirectory) {
+					/*setLoadingTxt({
+						txt: 'Importing directory: ' + entry.name,
+						stayOpen: true
+					});
+
+					// Copy the dropped DirectoryEntry over to our local filesystem.
+					entry.copyTo(cwd, null, function(copiedEntry) {
+						setLoadingTxt({
+							txt: DONE_MSG
+						});
+						renderImages(cwd);
+					}, onError);*/
+				} else {
+					if (entry.isFile && files[i].type.match('^plain/')) {
+						// Copy the dropped entry into local filesystem.
+						console.log(entry);
+					} else {
+						updateFileStatus('You can not drop this file here!');
+					}
+				}
+			}
+		}
+	};
+
+	var onDragOver = function(e){
+		e.preventDefault();
+		e.stopPropagation();
+
+		if(isValidFileToDrop(e.dataTransfer)){
+			console.log('I see you are dragging something GOOD');
+		}else{
+			console.log('I see you are dragging something BAD');
+		}
+	}
+
+	var isValidFileToDrop = function(dataTransfer) {
+		return dataTransfer && dataTransfer.types && dataTransfer.types.indexOf('Files') >= 0
 	}
 
 	function errorHandler(error) {
